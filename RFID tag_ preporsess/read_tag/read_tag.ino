@@ -40,5 +40,4 @@ void loop() {
 		return;
 	}
 	mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
-  Serial.println(F("We will modify the 15th section"));
 }
