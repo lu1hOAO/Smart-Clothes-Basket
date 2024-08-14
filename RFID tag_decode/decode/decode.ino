@@ -19,6 +19,9 @@ void setup() {
     delay(5);				// Optional delay. Some board do need more time after init to be ready, see Readme
 	  mfrc522.PCD_DumpVersionToSerial();	// Show details of PCD - MFRC522 Card Reader details
 	  Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
+    for (byte i = 0; i < 6; i++) {
+        key.keyByte[i] = 0xFF;
+    }
 }
 
 /**
@@ -49,6 +52,7 @@ void loop() {
         return;
     }
 
+    byte sector= 15;
     byte blockAddr      = 62;
     MFRC522::StatusCode status;
     byte buffer[18];
@@ -58,6 +62,8 @@ void loop() {
     bool underware = 0;
 
     // Read data from the block
+    mfrc522.PICC_DumpMifareClassicSectorToSerial(&(mfrc522.uid), &key, sector);
+    Serial.println();
     Serial.print(F("Reading data from block ")); Serial.print(blockAddr);
     Serial.println(F(" ..."));
     status = (MFRC522::StatusCode) mfrc522.MIFARE_Read(blockAddr, buffer, &size);
@@ -85,7 +91,7 @@ void loop() {
     
     // Dump decode rst
     Serial.print(F("The underware result is ")); Serial.println(underware == 1 ? "true" : "false");
-    Serial.print(F("The color result is (0 means no color checking) ")); Serial.println(dark);
+    Serial.print(F("The color result is ")); Serial.println(dark);
     Serial.print(F("The decode result is ")); Serial.println(rst);
     Serial.println();
 
@@ -104,4 +110,3 @@ void dump_byte_array(byte *buffer, byte bufferSize) {
         Serial.print(buffer[i], HEX);
     }
 }
-
