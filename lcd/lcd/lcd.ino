@@ -1,18 +1,20 @@
 #include <LiquidCrystal_PCF8574.h>
 
-LiquidCrystal_PCF8574 lcd(0x3f);
-void setup() {
-  // put your setup code here, to run once:
-  lcd.begin(16,2);
+LiquidCrystal_PCF8574 lcd(0x27);  // i2c address，0x27 or 0x3F
+
+void setup()
+{
+  lcd.begin(16, 2); // initialize LCD
   lcd.setBacklight(255);
   lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("*~ first line");
+  lcd.setCursor(0,0); //(col,row)
+  lcd.print("~* first line!");
   lcd.setCursor(0,1);
-  lcd.print("~* second line.");
-}
+  lcd.print("*~ second line!");
+  
+} // setup()
 
-void loop() {
-  // put your main code here, to run repeatedly:
-
-}
+void loop()
+{
+  
+} // loop()

@@ -1,5 +1,6 @@
 #include <SPI.h>
 #include <MFRC522.h>
+#include <LiquidCrystal_PCF8574.h>
 
 #define RST_PIN         9           // Configurable, see typical pin layout above
 #define SS_PIN          10          // Configurable, see typical pin layout above
@@ -7,7 +8,7 @@
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
 
 MFRC522::MIFARE_Key key;
-
+LiquidCrystal_PCF8574 lcd(0x27); //or 0x3f
 /**
  * Initialize.
  */
@@ -22,12 +23,24 @@ void setup() {
     for (byte i = 0; i < 6; i++) {
         key.keyByte[i] = 0xFF;
     }
+
+    // display set up
+    lcd.begin(16,2);
+    lcd.setBacklight(255);
+    lcd.clear();
+    
+
 }
 
 /**
  * Main loop.
  */
 void loop() {
+    lcd.setCursor(0,0);
+    lcd.print("Ready!");
+    lcd.setCursor(0,1);
+    lcd.print("Scan the tag...");
+    delay(500);
     // Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
     if ( ! mfrc522.PICC_IsNewCardPresent())
         return;
@@ -87,6 +100,7 @@ void loop() {
       if(buffer[0]<128) dark+=1;
       if(buffer[1]<128) dark+=1;
       if(buffer[2]<128) dark+=1;
+      if(dark>1) rst = 2;
     }
     
     // Dump decode rst
@@ -94,6 +108,15 @@ void loop() {
     Serial.print(F("The color result is ")); Serial.println(dark);
     Serial.print(F("The decode result is ")); Serial.println(rst);
     Serial.println();
+
+    //Show on lcd
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Go bucket "); lcd.print(rst);
+    lcd.setCursor(0,1);
+    lcd.print("Please Wait 10s"); 
+    delay(10000); 
+    lcd.clear();
 
     // Halt PICC
     mfrc522.PICC_HaltA();
